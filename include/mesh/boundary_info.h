@@ -827,6 +827,17 @@ public:
   std::string & edgeset_name(boundary_id_type id);
 
   /**
+   * \returns A reference for getting an optional adjacency a sideset.
+   */
+  const bool & is_sideset_adjacent(boundary_id_type id) const;
+
+  /**
+   * \returns A writable reference for setting an optional
+   * adjacency of a sideset.
+   */
+  bool & sideset_adjacency(boundary_id_type id);
+
+  /**
    * \returns The id of the named boundary if it exists, \p invalid_id
    * otherwise.
    */
@@ -855,6 +866,14 @@ public:
   { return _es_id_to_name; }
   const std::map<boundary_id_type, std::string> & get_edgeset_name_map () const
   { return _es_id_to_name; }
+
+  /**
+   * \returns Writable/const reference to the adjacency map.
+   */
+  std::map<boundary_id_type, bool> & set_sideset_adjacency_map ()
+  { return _ss_id_to_adj; }
+  const std::map<boundary_id_type, bool> & get_sideset_adjacency_map () const
+  { return _ss_id_to_adj; }
 
   /**
    * Number used for internal use. This is the return value
@@ -1006,6 +1025,16 @@ private:
    * processors
    */
   std::map<boundary_id_type, std::string> _ss_id_to_name;
+
+  /**
+   * This structure maintains the mapping of side sets to 
+   * whether the neighbors of each element are adjacent (true)
+   * or separated (false). Default is adjacent.
+   *
+   * This data is global in nature, meaning it should be an aggregate of information across
+   * processors
+   */
+  std::map<boundary_id_type, bool> _ss_id_to_adj;
 
   /**
    * This structure maintains the mapping of named node sets

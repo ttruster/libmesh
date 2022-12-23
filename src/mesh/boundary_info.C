@@ -146,6 +146,7 @@ BoundaryInfo & BoundaryInfo::operator=(const BoundaryInfo & other_boundary_info)
   _ss_id_to_name = other_boundary_info._ss_id_to_name;
   _ns_id_to_name = other_boundary_info._ns_id_to_name;
   _es_id_to_name = other_boundary_info._es_id_to_name;
+  _ss_id_to_adj = other_boundary_info._ss_id_to_adj;
 
   return *this;
 }
@@ -169,6 +170,7 @@ void BoundaryInfo::clear()
   _ss_id_to_name.clear();
   _ns_id_to_name.clear();
   _es_id_to_name.clear();
+  _ss_id_to_adj.clear();
 }
 
 
@@ -1474,6 +1476,7 @@ void BoundaryInfo::remove_id (boundary_id_type id)
   _ss_id_to_name.erase(id);
   _ns_id_to_name.erase(id);
   _es_id_to_name.erase(id);
+  _ss_id_to_adj.erase(id);
 
   // Erase (*, id) entries from map.
   erase_if(_boundary_node_id,
@@ -1568,6 +1571,7 @@ void BoundaryInfo::renumber_id (boundary_id_type old_id,
   renumber_name(_ss_id_to_name, old_id, new_id);
   renumber_name(_ns_id_to_name, old_id, new_id);
   renumber_name(_es_id_to_name, old_id, new_id);
+  renumber_name(_ss_id_to_adj, old_id, new_id);
 }
 
 
@@ -2548,6 +2552,24 @@ std::string & BoundaryInfo::edgeset_name(boundary_id_type id)
 {
   return _es_id_to_name[id];
 }
+
+
+const bool & BoundaryInfo::is_sideset_adjacent(boundary_id_type id) const
+{
+  static const bool stat_true = true;
+  std::map<boundary_id_type, bool>::const_iterator it =
+    _ss_id_to_adj.find(id);
+  if (it == _ss_id_to_adj.end())
+    return stat_true;
+  else
+    return it->second;
+}
+
+bool & BoundaryInfo::sideset_adjacency(boundary_id_type id)
+{
+  return _ss_id_to_adj[id];
+}
+
 
 boundary_id_type BoundaryInfo::get_id_by_name(std::string_view name) const
 {
